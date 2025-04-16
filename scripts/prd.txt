@@ -1,0 +1,123 @@
+**Specification: Static Web App for Rendering and Editing Helm Chart Values**
+
+---
+
+### Overview
+
+A static, client-side web application that allows users to view, edit, and export Helm chart `values.yaml` configurations through a dynamic, form-based UI.
+
+---
+
+### Input Methods
+
+- **Paste raw YAML**
+- **Upload a `values.yaml` file**
+- **Search for and fetch a chart from a Helm repository**
+  - Support multiple repositories
+  - Optional username/password for private repos
+- **Upload a chart `.tgz` file**
+
+---
+
+### Chart Handling
+
+- Chart content is processed client-side only
+- Extract and parse `values.yaml` and optionally `values.schema.json`
+- Ignore all other files (e.g., templates, `charts/`)
+- Only the most recently fetched version of a chart is cached
+
+---
+
+### UI Rendering Logic
+
+- Uses a static JSON definition set to determine UI component types based on heuristics
+- Fallback logic:
+  1. Use `values.schema.json` if available
+  2. Apply heuristics from definition set
+  3. Default to single-line text input
+- Modular UI components for:
+  - Booleans (toggle switch)
+  - Strings
+  - Numbers (number input)
+  - Arrays (add/remove entries)
+  - Objects (key-value editors)
+  - Complex fields like `resources`, `affinity`, `securityContext`
+
+---
+
+### Form Behavior
+
+- Fields are editable
+- Only predefined fields (from `values.yaml` or schema) are shown
+- Inline validation:
+  - Real-time type checking, required fields, etc.
+  - Errors shown inline next to the field
+- Modified fields:
+  - Visually indicated (e.g. border highlight)
+  - "Reset to default" button for each field
+
+---
+
+### Output and Export
+
+- Copy modified values to clipboard
+- Download as `values.yaml` file
+- Generate Helm CLI `--set` string (only modified values, flattened keys)
+- Read-only preview panel (shows only modified values)
+
+---
+
+### User Experience
+
+- Single tab layout (no tab switching)
+- Supports dark/light mode toggle
+- All interactions are mouse-driven (no keyboard shortcuts yet)
+- Tooltips/hints rendered from comments in original `values.yaml`
+- Load chart state from URL on startup via URL encoding
+- Discoverable UI (no onboarding tour or documentation panel)
+
+---
+
+### Caching & Storage
+
+- Uses `localStorage` to persist user state and last used charts
+- Uses IndexedDB for caching recently used charts (up to a sensible default limit, e.g. 10 charts)
+- Users can clear individual charts or the entire cache
+- Chart browser UI:
+  - Searchable
+  - Shows chart name, version, repo, last used time
+  - Allows removing entries
+
+---
+
+### Chart Metadata
+
+- Link to external README (if available)
+- No in-app rendering of README
+
+---
+
+### Layout
+
+- Fixed layout
+- No panel resizing or hiding
+- No keyboard navigation beyond standard browser behavior
+
+---
+
+### Telemetry & Feedback
+
+- No analytics or tracking
+- No in-app feedback mechanism in v1
+
+---
+
+### Localization
+
+- English only
+
+---
+
+### Summary
+
+A privacy-first, client-side static web app for editing Helm values, built for clarity and usability with no backend dependency. Enables viewing, modifying, and exporting `values.yaml` files and generating Helm CLI `--set` commands from an intuitive UI. 
